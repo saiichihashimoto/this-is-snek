@@ -105,30 +105,30 @@ $(function() {
 		var f;
 		for (f = 0; f < body.food.length; f++) {
 			coor = body.food[f];
-			$('#cell_' + coor[1] + '_' + coor[0]).addClass('food');
+			$('#cell_' + coor[0] + '_' + coor[1]).addClass('food');
 		}
 		 if (body.walls) {
 		for (f = 0; f < body.walls.length; f++) {
 			coor = body.walls[f];
-			$('#cell_' + coor[1] + '_' + coor[0]).addClass('wall');
+			$('#cell_' + coor[0] + '_' + coor[1]).addClass('wall');
 		}
 		 }
 		 if (body.gold) {
 		for (f = 0; f < body.gold.length; f++) {
 			coor = body.gold[f];
-			$('#cell_' + coor[1] + '_' + coor[0]).addClass('gold');
+			$('#cell_' + coor[0] + '_' + coor[1]).addClass('gold');
 		}
 		 }
 		for (var g = 0; g < body.snakes.length; g++) {
 			var snake = body.snakes[g];
 			coor = snake.coords[0];
-			$('#cell_' + coor[1] + '_' + coor[0]).addClass('snake-head');
+			$('#cell_' + coor[0] + '_' + coor[1]).addClass('snake-head');
 			if (snake.id === '{{ me|safe }}') {
-				$('#cell_' + coor[1] + '_' + coor[0]).addClass('my-snake');
+				$('#cell_' + coor[0] + '_' + coor[1]).addClass('my-snake');
 			}
 			for (f = 1; f < snake.coords.length; f++) {
 				coor = snake.coords[f];
-				$('#cell_' + coor[1] + '_' + coor[0]).addClass('snake-body');
+				$('#cell_' + coor[0] + '_' + coor[1]).addClass('snake-body');
 			}
 		}
 	});
