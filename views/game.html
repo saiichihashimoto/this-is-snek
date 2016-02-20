@@ -25,8 +25,9 @@ $(function() {
 		console.log('going', dir);
 		dir_div.html(MAP[dir] || dir);
 	});
-	socket.on('done', function() {
+	socket.on(game_socket + ':done', function() {
 		status_div.html('STOP');
+		window.close();
 	});
 	$("body").keydown(function(e) {
 		switch (e.keyCode) {

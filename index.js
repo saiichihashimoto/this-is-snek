@@ -36,7 +36,7 @@ function addGame(game) {
 
 function removeGame(game) {
 	delete GAMES[game];
-	io.off('game:' + game + ':go');
+	io.emit('game:' + game + ':done');
 }
 
 setInterval(function() {
@@ -49,7 +49,7 @@ io.on('connection', function(socket) {
 	socket.on('setGame', function(new_game) {
 		game = new_game;
 		if (!GAMES[game]) {
-			return socket.emit('done');
+			return socket.emit('game:' + game + ':done');
 		}
 		game = new_game;
 		socket.emit('going', GAMES[game]);
@@ -57,7 +57,7 @@ io.on('connection', function(socket) {
 
 	socket.on('go', function(dir) {
 		if (!GAMES[game]) {
-			return socket.emit('done');
+			return socket.emit('game:' + game + ':done');
 		}
 		GAMES[game] = dir;
 		socket.emit('going', GAMES[game]);
