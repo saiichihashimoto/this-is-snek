@@ -33,8 +33,12 @@ $(function() {
 	socket.on(game_socket + ':turnstart', function(turn) {
 		status_div.html(turn + ' start');
 	});
-	socket.on(game_socket + ':turnstop', function() {
+	socket.on(game_socket + ':turnstop', function(turn) {
 		status_div.html(turn + ' end');
+		body_div.css('background', 'green');
+		setTimeout(function() {
+			body_div.css('background', '');
+		}, 200);
 	});
 	body_div.keydown(function(e) {
 		switch (e.keyCode) {
