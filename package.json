@@ -15,7 +15,8 @@
     "body-parser": "^1.14.1",
     "express": "*",
     "morgan": "^1.6.1",
-    "nodemon": "*"
+    "nodemon": "*",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {},
   "main": "index.js",

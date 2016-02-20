@@ -1,9 +1,10 @@
-var config      = require('./config.json');
-var bodyParser  = require('body-parser');
-var express     = require('express');
-var logger      = require('morgan');
-var app         = express();
-var routes      = require('./routes');
+var _          = require('underscore');
+var config     = require('./config.json');
+var bodyParser = require('body-parser');
+var express    = require('express');
+var logger     = require('morgan');
+var app        = express();
+var routes     = require('./routes');
 
 app.set('port', (process.env.PORT || config.port));
 // For deployment to Heroku, the port needs to be set using ENV, so
@@ -13,7 +14,41 @@ app.enable('verbose errors');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(routes);
+
+var SEC_3_4      = 740;
+var GAMES        = {};
+var START_TAUNTS = ['This is snek'];
+var MOVE_TAUNTS  = ['This is snek'];
+
+app.get('/', function(req, res) {
+	res.json({
+		color: '#ff0000',
+		head:  'http://battlesnake-node.herokuapp.com/'
+	});
+});
+
+app.post('/start', function(req, res) {
+	GAME[res.body.game] = 'north';
+	res.json({
+		taunt: _.sample(START_TAUNTS)
+	});
+});
+
+app.post('/move', function(req, res) {
+	setTimeout(function() {
+		res.json({
+			move:  GAME[res.body.game] || 'north',
+			taunt: _.sample(MOVE_TAUNTS)
+		});
+	}, SEC_3_4);
+});
+
+app.post('/end', function(req, res) {
+	delete GAME[res.body.game];
+	res.json({});
+});
+
+// app.use(routes);
 
 app.use('*',function (req, res, next) {
   if (req.url === '/favicon.ico') {
