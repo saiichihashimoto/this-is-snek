@@ -23,6 +23,6 @@
     "node": "4.x"
   },
   "scripts": {
-    "start": "nf start"
+    "start": "node $npm_package_main"
   }
 }
