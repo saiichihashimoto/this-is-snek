@@ -91,6 +91,7 @@ $(function() {
 		window.close();
 	});
 	socket.on(game_socket + ':turnstart', function(body) {
+		status_div.html(req.body.turn + ' start');
 		if (!grid_built) {
 			grid_built = true;
 			for (var y = 0; y < body.height; y++) {
@@ -98,7 +99,7 @@ $(function() {
 				for (var x = 0; x < body.width; x++) {
 					row.append("<div id='cell_" + y + "_" + x + "' class='cell'></div>");
 				}
-				grid_rows.append(row);
+				grid_div.append(row);
 			}
 		}
 		for (var y = 0; y < body.height; y++) {
@@ -131,7 +132,7 @@ $(function() {
 		}
 	});
 	socket.on(game_socket + ':turnstop', function(turn) {
-		status_div.html(body.turn + ' end');
+		status_div.html(req.body.turn + ' end');
 		body_div.css('background', 'green');
 		setTimeout(function() {
 			body_div.css('background', '');
