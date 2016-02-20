@@ -3,8 +3,9 @@
 	<title></title>
 </head>
 <body>
-	<div id="direction">Wait...</div>
-	<div id="done"></div>
+	<h1>Game: {{ game|safe }}</h1>
+	<h2 id="direction">Wait...</h2>
+	<div id="status"></div>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
@@ -18,13 +19,14 @@ var MAP = {
 var socket = io();
 $(function() {
 	var dir_div = $("#direction");
+	var status_div = $("#status");
 	var game_socket = 'game:{{ game|safe }}';
 	socket.on('going', function(dir) {
 		console.log('going', dir);
 		dir_div.html(MAP[dir] || dir);
 	});
 	socket.on('done', function() {
-		$('#done').html('The game is over, stop playing!');
+		status_div.html('STOP');
 	});
 	$("body").keydown(function(e) {
 		switch (e.keyCode) {
@@ -47,7 +49,7 @@ $(function() {
 		}
 	});
 	socket.emit('setGame', '{{ game|safe }}');
-	dir_div.html('GO!!!');
+	status_div.html('Playing!!!');
 });
 	</script>
 </body>

@@ -3,7 +3,8 @@
 	<title></title>
 </head>
 <body>
-	<ul id="games"></ul>
+	<h1>Games:</h1>
+	<span id="games"></span>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
@@ -15,7 +16,7 @@ $(function() {
 	function showGames(games) {
 		games_div.html('');
 		games.map(function(game) {
-			games_div.append("<li><a href='/" + game + "' target='_blank'>" + game +"</a></li>");
+			games_div.append("<h2><a href='/" + game + "' target='_blank'>" + game +"</a></h2>");
 		});
 	}
 	showGames(GAMES);
