@@ -6,7 +6,7 @@ var logger     = require('morgan');
 var app        = express();
 var routes     = require('./routes');
 
-app.set('port', (process.env.PORT || config.port));
+app.set('port', process.env.PORT || 8000);
 // For deployment to Heroku, the port needs to be set using ENV, so
 // we check for the port number in process.env before going to config.
 
@@ -29,6 +29,9 @@ app.get('/', function(req, res) {
 
 app.post('/start', function(req, res) {
 	GAMES[req.body.game] = 'north';
+	_.each(GAMES, function(dir, game_id) {
+		console.log(process.env.URL + game_id);
+	});
 	res.json({
 		taunt: _.sample(START_TAUNTS)
 	});
@@ -45,6 +48,9 @@ app.post('/move', function(req, res) {
 
 app.post('/end', function(req, res) {
 	delete GAMES[req.body.game];
+	_.each(GAMES, function(dir, game_id) {
+		console.log(process.env.URL + game_id);
+	});
 	res.json({});
 });
 
@@ -96,5 +102,5 @@ app.use(function (err, req, res, next) {
 });
 
 var server = app.listen(app.get('port'), function () {
-  console.log('Server listening at http://%s:%s', config.host, app.get('port'));
+  console.log('Server listening at %s', process.env.URL);
 });
