@@ -73,15 +73,16 @@ app.get('/', function(req, res) {
 
 app.post('/start', function(req, res) {
 	addGame(req.body.game);
+	io.emit('game:' + req.body.game + ':turnstart', req.body);
 	res.json({
 		taunt: _.sample(START_TAUNTS)
 	});
 });
 
 app.post('/move', function(req, res) {
-	io.emit('game:' + req.body.game + ':turnstart', req.body.turn);
+	io.emit('game:' + req.body.game + ':turnstart', req.body);
 	setTimeout(function() {
-		io.emit('game:' + req.body.game + ':turnstop', req.body.turn);
+		io.emit('game:' + req.body.game + ':turnstop', _.pick(req.body, 'turn'));
 		res.json({
 			move:  GAMES[req.body.game] || 'north',
 			taunt: _.sample(MOVE_TAUNTS)

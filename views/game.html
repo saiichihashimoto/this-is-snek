@@ -1,11 +1,69 @@
 <html>
 <head>
 	<title></title>
+	<style>
+		* {
+			box-sizing: border-box;		
+		}
+		body {
+			background: #222;
+			text-align: center;
+			display: flex;
+		}
+		.grid {
+			border: 8px solid steelblue;
+			overflow: auto;
+			margin: auto;
+		}
+		.row {
+			float: left;
+			background: #292929
+		}
+		.row:first-of-type {
+			border-left: 1px solid rgba(255,255,255,.2);
+		}
+		.cell {
+			border-right: 1px solid rgba(255,255,255,.2);
+			border-bottom: 1px solid rgba(255,255,255,.2);
+			height: 23px;
+			width: 23px;
+			position: relative;
+		}
+
+		.cell:first-of-type {
+			border-top: 1px solid rgba(255,255,255,.2);
+		}
+		.wall {
+			background: steelblue;
+		}
+		.snake-body {
+			background: white;
+		}
+		.snake-head {
+			background: pink;
+		}
+		.gold:after,
+		.food:after {
+			content: "";
+			position: absolute;
+			top: 4px;
+			left: 4px;
+			background: #60F360;
+			width: 14px;
+			height: 14px;
+			border-radius: 50%;
+		}
+
+		.gold:after {
+			background: yellow;
+		}
+	</style>
 </head>
 <body>
 	<h1>Game: {{ game|safe }}</h1>
 	<h2 id="direction">Wait...</h2>
-	<div id="status"></div>
+	<div id="grid" class="grid"></div>
+	<h3 id="status"></h3>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
@@ -20,21 +78,60 @@ var socket = io();
 $(function() {
 	var dir_div = $("#direction");
 	var status_div = $("#status");
+	var grid_div = $("#grid");
 	var body_div = $("body");
 	var game_socket = 'game:{{ game|safe }}';
+	var grid_built;
+
 	socket.on('going', function(dir) {
-		console.log('going', dir);
 		dir_div.html(MAP[dir] || dir);
 	});
 	socket.on(game_socket + ':done', function() {
 		status_div.html('DONE');
 		window.close();
 	});
-	socket.on(game_socket + ':turnstart', function(turn) {
-		status_div.html(turn + ' start');
+	socket.on(game_socket + ':turnstart', function(body) {
+		if (!grid_built) {
+			grid_built = true;
+			for (var y = 0; y < body.height; y++) {
+				var row = $("<div class='row'></div>");
+				for (var x = 0; x < body.width; x++) {
+					row.append("<div id='cell_" + y + "_" + x + "' class='cell'></div>");
+				}
+				grid_rows.append(row);
+			}
+		}
+		for (var y = 0; y < body.height; y++) {
+			for (var x = 0; x < body.width; x++) {
+				$('#cell_' + y + '_' + x).removeClass('food wall gold snake-body snake-head');
+			}
+		}
+		var coor;
+		var f;
+		for (f = 0; f < body.food.length; f++) {
+			coor = body.food[f];
+			$('#cell_' + coor[1] + '_' + coor[0]).addClass('food');
+		}
+		for (f = 0; f < body.walls.length; f++) {
+			coor = body.walls[f];
+			$('#cell_' + coor[1] + '_' + coor[0]).addClass('wall');
+		}
+		for (f = 0; f < body.gold.length; f++) {
+			coor = body.gold[f];
+			$('#cell_' + coor[1] + '_' + coor[0]).addClass('gold');
+		}
+		for (var g = 0; g < body.snakes.length; g++) {
+			var snake = body.snakes[g];
+			coor = snake.coords[0];
+			$('#cell_' + coor[1] + '_' + coor[0]).addClass('snake-head');
+			for (f = 1; f < snake.coords.length; f++) {
+				coor = snake.coords[f];
+				$('#cell_' + coor[1] + '_' + coor[0]).addClass('snake-body');
+			}
+		}
 	});
 	socket.on(game_socket + ':turnstop', function(turn) {
-		status_div.html(turn + ' end');
+		status_div.html(body.turn + ' end');
 		body_div.css('background', 'green');
 		setTimeout(function() {
 			body_div.css('background', '');
@@ -43,19 +140,15 @@ $(function() {
 	body_div.keydown(function(e) {
 		switch (e.keyCode) {
 			case 37:
-				console.log('want to go west');
 				socket.emit('go', 'west');
 				break;
 			case 38:
-				console.log('want to go north');
 				socket.emit('go', 'north');
 				break;
 			case 39:
-				console.log('want to go east');
 				socket.emit('go', 'east');
 				break;
 			case 40:
-				console.log('want to go south');
 				socket.emit('go', 'south');
 				break;
 		}
