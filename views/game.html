@@ -31,18 +31,18 @@ $(function() {
 		window.close();
 	});
 	socket.on(game_socket + ':turnstart', function() {
-		body.css('background', 'green');
+		body_div.css('background', 'green');
 		setTimeout(function() {
-			body.css('background', '');
+			body_div.css('background', '');
 		}, 100);
 	});
 	socket.on(game_socket + ':turnstop', function() {
-		body.css('background', 'red');
+		body_div.css('background', 'red');
 		setTimeout(function() {
-			body.css('background', '');
+			body_div.css('background', '');
 		}, 100);
 	});
-	body.keydown(function(e) {
+	body_div.keydown(function(e) {
 		switch (e.keyCode) {
 			case 37:
 				console.log('want to go west');
