@@ -1,22 +1,27 @@
 var _          = require('underscore');
-var config     = require('./config.json');
 var bodyParser = require('body-parser');
 var express    = require('express');
-var logger     = require('morgan');
-var app        = express();
+var path       = require('path');
 var routes     = require('./routes');
+var swig       = require('swig');
+
+var app = express();
 
 app.set('port', process.env.PORT || 8000);
-// For deployment to Heroku, the port needs to be set using ENV, so
-// we check for the port number in process.env before going to config.
 
 app.enable('verbose errors');
 
-!process.env.NODE_ENV && app.use(logger('dev'));
 app.use(bodyParser.json());
 
+app.engine('html', swig.renderFile);
+
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view cache', false);
+swig.setDefaults({ cache: false  });
+
 var SEC_3_4      = 740;
-var GAMES        = {};
+var GAMES        = { test: 'north' };
 var START_TAUNTS = ['This is snek'];
 var MOVE_TAUNTS  = ['This is snek'];
 
@@ -55,6 +60,14 @@ app.post('/end', function(req, res) {
 	delete GAMES[req.body.game];
 	print_games();
 	res.json({});
+});
+
+app.get('*', function(req, res, next) {
+	var game = req.url.slice(1);
+	if (!GAMES[game]) {
+		return next();
+	}
+	res.render('index', { game: game });
 });
 
 // app.use(routes);
@@ -105,5 +118,5 @@ app.use(function (err, req, res, next) {
 });
 
 var server = app.listen(app.get('port'), function () {
-  console.log('Server listening at %s', process.env.URL);
+  console.log('Server listening at ' + process.env.URL);
 });
