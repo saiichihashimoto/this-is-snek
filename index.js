@@ -20,6 +20,13 @@ var GAMES        = {};
 var START_TAUNTS = ['This is snek'];
 var MOVE_TAUNTS  = ['This is snek'];
 
+function print_games() {
+	console.log('Games:');
+	_.each(GAMES, function(dir, game_id) {
+		console.log(process.env.URL + game_id);
+	});
+}
+
 app.get('/', function(req, res) {
 	res.json({
 		color: '#ff0000',
@@ -29,9 +36,7 @@ app.get('/', function(req, res) {
 
 app.post('/start', function(req, res) {
 	GAMES[req.body.game] = 'north';
-	_.each(GAMES, function(dir, game_id) {
-		console.log(process.env.URL + game_id);
-	});
+	print_games();
 	res.json({
 		taunt: _.sample(START_TAUNTS)
 	});
@@ -48,9 +53,7 @@ app.post('/move', function(req, res) {
 
 app.post('/end', function(req, res) {
 	delete GAMES[req.body.game];
-	_.each(GAMES, function(dir, game_id) {
-		console.log(process.env.URL + game_id);
-	});
+	print_games();
 	res.json({});
 });
 
