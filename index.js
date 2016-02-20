@@ -28,7 +28,7 @@ app.get('/', function(req, res) {
 });
 
 app.post('/start', function(req, res) {
-	GAME[res.body.game] = 'north';
+	GAMES[res.body.game] = 'north';
 	res.json({
 		taunt: _.sample(START_TAUNTS)
 	});
@@ -37,14 +37,14 @@ app.post('/start', function(req, res) {
 app.post('/move', function(req, res) {
 	setTimeout(function() {
 		res.json({
-			move:  GAME[res.body.game] || 'north',
+			move:  GAMES[res.body.game] || 'north',
 			taunt: _.sample(MOVE_TAUNTS)
 		});
 	}, SEC_3_4);
 });
 
 app.post('/end', function(req, res) {
-	delete GAME[res.body.game];
+	delete GAMES[res.body.game];
 	res.json({});
 });
 
