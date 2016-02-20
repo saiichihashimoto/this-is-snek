@@ -64,6 +64,8 @@ io.on('connection', function(socket) {
 	});
 });
 
+app.use('/assets', express.static('assets'));
+
 app.get('/', function(req, res) {
 	res.json({
 		color: '#36CF52',
