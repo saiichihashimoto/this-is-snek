@@ -27,20 +27,14 @@ $(function() {
 		dir_div.html(MAP[dir] || dir);
 	});
 	socket.on(game_socket + ':done', function() {
-		status_div.html('STOP');
+		status_div.html('DONE');
 		window.close();
 	});
-	socket.on(game_socket + ':turnstart', function() {
-		body_div.css('background', 'green');
-		setTimeout(function() {
-			body_div.css('background', '');
-		}, 100);
+	socket.on(game_socket + ':turnstart', function(turn) {
+		status_div.html(turn + ' start');
 	});
 	socket.on(game_socket + ':turnstop', function() {
-		body_div.css('background', 'red');
-		setTimeout(function() {
-			body_div.css('background', '');
-		}, 100);
+		status_div.html(turn + ' end');
 	});
 	body_div.keydown(function(e) {
 		switch (e.keyCode) {
@@ -63,7 +57,7 @@ $(function() {
 		}
 	});
 	socket.emit('setGame', '{{ game|safe }}');
-	status_div.html('Playing!!!');
+	status_div.html('GO');
 });
 	</script>
 </body>
