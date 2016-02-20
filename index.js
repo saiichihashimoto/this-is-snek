@@ -79,7 +79,9 @@ app.post('/start', function(req, res) {
 });
 
 app.post('/move', function(req, res) {
+	io.emit('game:' + game + ':turnstart', req.body.turn);
 	setTimeout(function() {
+		io.emit('game:' + game + ':turnstop', req.body.turn);
 		res.json({
 			move:  GAMES[req.body.game] || 'north',
 			taunt: _.sample(MOVE_TAUNTS)

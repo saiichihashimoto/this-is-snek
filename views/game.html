@@ -20,6 +20,7 @@ var socket = io();
 $(function() {
 	var dir_div = $("#direction");
 	var status_div = $("#status");
+	var body_div = $("body");
 	var game_socket = 'game:{{ game|safe }}';
 	socket.on('going', function(dir) {
 		console.log('going', dir);
@@ -29,7 +30,19 @@ $(function() {
 		status_div.html('STOP');
 		window.close();
 	});
-	$("body").keydown(function(e) {
+	socket.on(game_socket + ':turnstart', function() {
+		body.css('background', 'green');
+		setTimeout(function() {
+			body.css('background', '');
+		}, 100);
+	});
+	socket.on(game_socket + ':turnstop', function() {
+		body.css('background', 'red');
+		setTimeout(function() {
+			body.css('background', '');
+		}, 100);
+	});
+	body.keydown(function(e) {
 		switch (e.keyCode) {
 			case 37:
 				console.log('want to go west');
