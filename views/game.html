@@ -57,13 +57,14 @@
 		.gold:after {
 			background: yellow;
 		}
+
+		.my-snake {
+			 background: #3c9;
+		}
 	</style>
 </head>
 <body>
-	<h1>Game: {{ game|safe }}</h1>
-	<h2 id="direction">Wait...</h2>
 	<div id="grid" class="grid"></div>
-	<h3 id="status"></h3>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
@@ -76,23 +77,15 @@ var MAP = {
 };
 var socket = io();
 $(function() {
-	var dir_div = $("#direction");
-	var status_div = $("#status");
 	var grid_div = $("#grid");
 	var body_div = $("body");
 	var game_socket = 'game:{{ game|safe }}';
 	var grid_built;
 
-	socket.on('going', function(dir) {
-		dir_div.html(MAP[dir] || dir);
-	});
 	socket.on(game_socket + ':done', function() {
-		status_div.html('DONE');
 		window.close();
 	});
 	socket.on(game_socket + ':turnstart', function(body) {
-		console.log('turnstart', body);
-		status_div.html(body.turn + ' start');
 		if (!grid_built) {
 			grid_built = true;
 			for (var y = 0; y < body.height; y++) {
@@ -105,7 +98,7 @@ $(function() {
 		}
 		for (var y = 0; y < body.height; y++) {
 			for (var x = 0; x < body.width; x++) {
-				$('#cell_' + y + '_' + x).removeClass('food wall gold snake-body snake-head');
+				$('#cell_' + y + '_' + x).removeClass('food wall gold snake-body snake-head my-snake');
 			}
 		}
 		var coor;
@@ -126,6 +119,9 @@ $(function() {
 			var snake = body.snakes[g];
 			coor = snake.coords[0];
 			$('#cell_' + coor[1] + '_' + coor[0]).addClass('snake-head');
+			if (snake.id === '{{ me|safe }}') {
+				$('#cell_' + coor[1] + '_' + coor[0]).addClass('my-snake');
+			}
 			for (f = 1; f < snake.coords.length; f++) {
 				coor = snake.coords[f];
 				$('#cell_' + coor[1] + '_' + coor[0]).addClass('snake-body');
@@ -133,8 +129,6 @@ $(function() {
 		}
 	});
 	socket.on(game_socket + ':turnstop', function(body) {
-		console.log('turnstop', body);
-		status_div.html(body.turn + ' end');
 		body_div.css('background', 'green');
 		setTimeout(function() {
 			body_div.css('background', '');
@@ -157,7 +151,6 @@ $(function() {
 		}
 	});
 	socket.emit('setGame', '{{ game|safe }}');
-	status_div.html('GO');
 });
 	</script>
 </body>

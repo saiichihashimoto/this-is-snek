@@ -66,8 +66,8 @@ io.on('connection', function(socket) {
 
 app.get('/', function(req, res) {
 	res.json({
-		color: '#ff0000',
-		head:  'http://battlesnake-node.herokuapp.com/'
+		color: '#36CF52',
+		head:  process.env.URL + '/assets/snek.gif'
 	});
 });
 
@@ -104,7 +104,7 @@ app.get('*', function(req, res, next) {
 	if (!GAMES[game]) {
 		return next();
 	}
-	res.render('game', { game: game });
+	res.render('game', { game: game, me: process.env.SNAKE_ID });
 });
 
 // app.use(routes);
