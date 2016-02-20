@@ -12,7 +12,7 @@ app.set('port', (process.env.PORT || config.port));
 
 app.enable('verbose errors');
 
-app.use(logger('dev'));
+!process.env.NODE_ENV && app.use(logger('dev'));
 app.use(bodyParser.json());
 
 var SEC_3_4      = 740;
