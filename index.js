@@ -82,6 +82,7 @@ app.post('/move', function(req, res) {
 	io.emit('game:' + game + ':turnstart', req.body.turn);
 	setTimeout(function() {
 		io.emit('game:' + game + ':turnstop', req.body.turn);
+		console.log('what', game, GAMES[req.body.game] || 'north');
 		res.json({
 			move:  GAMES[req.body.game] || 'north',
 			taunt: _.sample(MOVE_TAUNTS)
