@@ -21,7 +21,7 @@ app.set('view cache', false);
 swig.setDefaults({ cache: false  });
 
 var SEC_3_4      = 740;
-var GAMES        = { test: 'north' };
+var GAMES        = { dummy: 'test' };
 var START_TAUNTS = ['This is snek'];
 var MOVE_TAUNTS  = ['This is snek'];
 
@@ -32,6 +32,16 @@ function print_games() {
 	});
 }
 
+function addGame(game) {
+	GAMES[game] = 'north';
+	print_games();
+}
+
+function removeGame(game) {
+	delete GAMES[game];
+	print_games();
+}
+
 app.get('/', function(req, res) {
 	res.json({
 		color: '#ff0000',
@@ -40,8 +50,7 @@ app.get('/', function(req, res) {
 });
 
 app.post('/start', function(req, res) {
-	GAMES[req.body.game] = 'north';
-	print_games();
+	addGame(req.body.game);
 	res.json({
 		taunt: _.sample(START_TAUNTS)
 	});
@@ -57,9 +66,12 @@ app.post('/move', function(req, res) {
 });
 
 app.post('/end', function(req, res) {
-	delete GAMES[req.body.game];
-	print_games();
+	removeGame(req.body.game);
 	res.json({});
+});
+
+app.get('/games', function(req, res) {
+	res.render('games', { games: _.keys(GAMES) });
 });
 
 app.get('*', function(req, res, next) {
@@ -67,7 +79,7 @@ app.get('*', function(req, res, next) {
 	if (!GAMES[game]) {
 		return next();
 	}
-	res.render('index', { game: game });
+	res.render('game', { game: game });
 });
 
 // app.use(routes);
