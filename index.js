@@ -1,11 +1,16 @@
 var _          = require('underscore');
 var bodyParser = require('body-parser');
 var express    = require('express');
+var http       = require('http');
 var path       = require('path');
-var routes     = require('./routes');
+var socketio   = require('socket.io');
 var swig       = require('swig');
 
-var app = express();
+var routes = require('./routes');
+
+var app    = express();
+var server = http.Server(app);
+var io     = socketio(server);
 
 app.set('port', process.env.PORT || 8000);
 
@@ -21,26 +26,43 @@ app.set('view cache', false);
 swig.setDefaults({ cache: false  });
 
 var SEC_3_4      = 740;
-var GAMES        = { dummy: 'test' };
+var GAMES        = { };
 var START_TAUNTS = ['This is snek'];
 var MOVE_TAUNTS  = ['This is snek'];
 
-function print_games() {
-	console.log('Games:');
-	_.each(GAMES, function(dir, game_id) {
-		console.log(process.env.URL + game_id);
-	});
-}
-
 function addGame(game) {
 	GAMES[game] = 'north';
-	print_games();
 }
 
 function removeGame(game) {
 	delete GAMES[game];
-	print_games();
+	io.off('game:' + game + ':go');
 }
+
+setInterval(function() {
+	io.emit('games', _.keys(GAMES));
+}, 1000);
+
+io.on('connection', function(socket) {
+	var game;
+
+	socket.on('setGame', function(new_game) {
+		game = new_game;
+		if (!GAMES[game]) {
+			return socket.emit('done');
+		}
+		game = new_game;
+		socket.emit('going', GAMES[game]);
+	});
+
+	socket.on('go', function(dir) {
+		if (!GAMES[game]) {
+			return socket.emit('done');
+		}
+		GAMES[game] = dir;
+		socket.emit('going', GAMES[game]);
+	});
+});
 
 app.get('/', function(req, res) {
 	res.json({
@@ -129,6 +151,6 @@ app.use(function (err, req, res, next) {
   return;
 });
 
-var server = app.listen(app.get('port'), function () {
+var server = server.listen(app.get('port'), function () {
   console.log('Server listening at ' + process.env.URL);
 });

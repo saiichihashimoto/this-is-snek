@@ -4,19 +4,22 @@
 </head>
 <body>
 	<ul id="games"></ul>
+	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
 	<script type="text/javascript">
+var socket = io();
 $(function() {
-	var games = $('#games');
+	var games_div = $('#games');
 	var GAMES = {{ games|json|safe }};
-	function showGames() {
-		games.html('');
-		GAMES.map(function(game) {
-			games.append("<li><a href='/" + game + "' target='_blank'>" + game +"</a></li>");
+	function showGames(games) {
+		games_div.html('');
+		games.map(function(game) {
+			games_div.append("<li><a href='/" + game + "' target='_blank'>" + game +"</a></li>");
 		});
 	}
-	showGames();
+	showGames(GAMES);
+	socket.on('games', showGames);
 });
 	</script>
 </body>

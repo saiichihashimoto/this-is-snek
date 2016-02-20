@@ -4,30 +4,50 @@
 </head>
 <body>
 	<div id="direction">Wait...</div>
-	Up: 38
-	Down: 40
-	Right: 39
-	Left: 37
+	<div id="done"></div>
+	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
 	<script type="text/javascript">
+var MAP = {
+	east: 'right',
+	north: 'up',
+	south: 'down',
+	west:  'left',
+};
+var socket = io();
 $(function() {
-	var dir = $("#direction");
-	dir.html('GO!!!');
+	var dir_div = $("#direction");
+	var game_socket = 'game:{{ game|safe }}';
+	socket.on('going', function(dir) {
+		console.log('going', dir);
+		dir_div.html(MAP[dir] || dir);
+	});
+	socket.on('done', function() {
+		$('#done').html('The game is over, stop playing!');
+	});
 	$("body").keydown(function(e) {
-	  if(e.keyCode == 38) {
-		  dir.html('up');
-	  }
-	  else if(e.keyCode == 39) {
-		  dir.html('right');
-	  }
-	  else if(e.keyCode == 40) {
-		  dir.html('down');
-	  }
-		else if(e.keyCode == 37) {
-		  dir.html('left');
+		switch (e.keyCode) {
+			case 37:
+				console.log('want to go west');
+				socket.emit('go', 'west');
+				break;
+			case 38:
+				console.log('want to go north');
+				socket.emit('go', 'north');
+				break;
+			case 39:
+				console.log('want to go east');
+				socket.emit('go', 'east');
+				break;
+			case 40:
+				console.log('want to go south');
+				socket.emit('go', 'south');
+				break;
 		}
 	});
+	socket.emit('setGame', '{{ game|safe }}');
+	dir_div.html('GO!!!');
 });
 	</script>
 </body>
