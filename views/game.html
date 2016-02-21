@@ -83,7 +83,7 @@ $(function() {
 	var grid_built;
 
 	socket.on(game_socket + ':done', function() {
-		//window.close();
+		window.close();
 	});
 	socket.on(game_socket + ':turnstart', function(body) {
 		if (!grid_built) {

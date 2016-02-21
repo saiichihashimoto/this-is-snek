@@ -69,7 +69,7 @@ app.use('/assets', express.static('assets'));
 app.get('/', function(req, res) {
 	res.json({
 		color: '#36CF52',
-		head:  process.env.URL + '/assets/snek.gif'
+		head:  process.env.URL + 'assets/snek.gif'
 	});
 });
 
