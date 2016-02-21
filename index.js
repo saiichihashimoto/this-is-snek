@@ -87,7 +87,7 @@ app.post('/move', function(req, res) {
 		var offset = req.body.turn % TAUNT.length;
 		res.json({
 			move:  GAMES[req.body.game] || 'north',
-			taunt: TAUNT.substring(offset) + TAUNT.substring(0, offset)
+			taunt: (TAUNT.substring(offset) + TAUNT.substring(0, offset)).split('').reverse().join('')
 		});
 	}, SEC_3_4);
 });
