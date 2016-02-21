@@ -39,8 +39,11 @@
 		.snake-body {
 			background: white;
 		}
-		.snake-head {
-			background: pink;
+		.snake-head-bad {
+			background: red;
+		}
+		.snake-head-good {
+			background: blue;
 		}
 		.gold:after,
 		.food:after {
@@ -98,7 +101,7 @@ $(function() {
 		}
 		for (var y = 0; y < body.height; y++) {
 			for (var x = 0; x < body.width; x++) {
-				$('#cell_' + y + '_' + x).removeClass('food wall gold snake-body snake-head my-snake');
+				$('#cell_' + y + '_' + x).removeClass('food wall gold snake-body snake-head-bad snake-head-good my-snake');
 			}
 		}
 		var coor;
@@ -107,24 +110,35 @@ $(function() {
 			coor = body.food[f];
 			$('#cell_' + coor[0] + '_' + coor[1]).addClass('food');
 		}
-		 if (body.walls) {
-		for (f = 0; f < body.walls.length; f++) {
-			coor = body.walls[f];
-			$('#cell_' + coor[0] + '_' + coor[1]).addClass('wall');
+		if (body.walls) {
+			for (f = 0; f < body.walls.length; f++) {
+				coor = body.walls[f];
+				$('#cell_' + coor[0] + '_' + coor[1]).addClass('wall');
+			}
 		}
-		 }
-		 if (body.gold) {
-		for (f = 0; f < body.gold.length; f++) {
-			coor = body.gold[f];
-			$('#cell_' + coor[0] + '_' + coor[1]).addClass('gold');
+		if (body.gold) {
+			for (f = 0; f < body.gold.length; f++) {
+				coor = body.gold[f];
+				$('#cell_' + coor[0] + '_' + coor[1]).addClass('gold');
+			}
 		}
-		 }
+		var ourlength;
+		var snake;
+		for (var g = 0; (g < body.snakes.length) && !ourlength; g++) {
+			snake = body.snakes[g];
+			if (snake.id === '{{ me|safe }}') {
+				ourlength = snake.coords.length;
+			}
+		}
 		for (var g = 0; g < body.snakes.length; g++) {
-			var snake = body.snakes[g];
+			snake = body.snakes[g];
 			coor = snake.coords[0];
-			$('#cell_' + coor[0] + '_' + coor[1]).addClass('snake-head');
 			if (snake.id === '{{ me|safe }}') {
 				$('#cell_' + coor[0] + '_' + coor[1]).addClass('my-snake');
+			} else if (body.snakes[g].coords.length < ourlength) {
+				$('#cell_' + coor[0] + '_' + coor[1]).addClass('snake-head-good');
+			} else {
+				$('#cell_' + coor[0] + '_' + coor[1]).addClass('snake-head-bad');
 			}
 			for (f = 1; f < snake.coords.length; f++) {
 				coor = snake.coords[f];
