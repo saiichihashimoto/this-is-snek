@@ -25,10 +25,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view cache', false);
 swig.setDefaults({ cache: false  });
 
-var SEC_3_4      = 740;
-var GAMES        = { };
-var START_TAUNTS = ['This is snek'];
-var MOVE_TAUNTS  = ['This is snek'];
+var SEC_3_4 = 740;
+var GAMES   = { };
+var TAUNT   = 'Ssssssssssss';
 
 function addGame(game) {
 	GAMES[game] = 'north';
@@ -77,7 +76,7 @@ app.post('/start', function(req, res) {
 	addGame(req.body.game);
 	io.emit('game:' + req.body.game + ':turnstart', req.body);
 	res.json({
-		taunt: _.sample(START_TAUNTS)
+		taunt: TAUNT
 	});
 });
 
@@ -85,9 +84,10 @@ app.post('/move', function(req, res) {
 	io.emit('game:' + req.body.game + ':turnstart', req.body);
 	setTimeout(function() {
 		io.emit('game:' + req.body.game + ':turnstop', _.pick(req.body, 'turn'));
+		var offset = req.body.turn % TAUNT.length;
 		res.json({
 			move:  GAMES[req.body.game] || 'north',
-			taunt: _.sample(MOVE_TAUNTS)
+			taunt: TAUNT.substring(offset) + TAUNT.substring(0, offset)
 		});
 	}, SEC_3_4);
 });
